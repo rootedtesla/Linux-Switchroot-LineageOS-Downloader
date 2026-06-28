@@ -8,8 +8,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import zipfile
 import sys
-import ctypes
 import hashlib
+import platform
 
 class LineageOSDownloader:
     def __init__(self, master):
@@ -23,7 +23,7 @@ class LineageOSDownloader:
 
         # Configure dark theme
         self.style.theme_use('clam')
-        self.style.configure('.', background='#2b2b2b', foreground='white', font=('Segoe UI', 10))
+        self.style.configure('.', background='#2b2b2b', foreground='white', font=('DejaVu Sans', 10))
         self.style.configure('TButton', background='#3d3d3d', bordercolor='#4d4d4d', relief='flat')
         self.style.map('TButton', 
                        background=[('active', '#4d4d4d'), ('disabled', '#2b2b2b')],
@@ -83,7 +83,7 @@ class LineageOSDownloader:
         header_frame = ttk.Frame(main_frame)
         header_frame.pack(fill=tk.X, pady=(0, 15))
         ttk.Label(header_frame, text="⚡ Switchroot LineageOS Downloader", 
-                  font=('Segoe UI', 14, 'bold')).pack()
+                  font=('DejaVu Sans', 14, 'bold')).pack()
 
         # Variants Selection
         variants_frame = ttk.LabelFrame(main_frame, text=" Choose Variants ", padding=10)
@@ -116,8 +116,8 @@ class LineageOSDownloader:
         # Build Info
         build_frame = ttk.Frame(main_frame)
         build_frame.pack(fill=tk.X, pady=5)
-        ttk.Label(build_frame, text="Latest Build:", font=('Segoe UI', 10)).pack(side=tk.LEFT)
-        self.build_label = ttk.Label(build_frame, text="-", font=('Segoe UI', 10, 'bold'),
+        ttk.Label(build_frame, text="Latest Build:", font=('DejaVu Sans', 10)).pack(side=tk.LEFT)
+        self.build_label = ttk.Label(build_frame, text="-", font=('DejaVu Sans', 10, 'bold'),
                                      foreground='#00cc66')
         self.build_label.pack(side=tk.LEFT, padx=5)
 
@@ -129,14 +129,14 @@ class LineageOSDownloader:
 
         # Progress Text
         self.progress_label = ttk.Label(progress_frame, text="Ready", 
-                                        font=('Segoe UI', 9), foreground='#888888')
+                                        font=('DejaVu Sans', 9), foreground='#888888')
         self.progress_label.pack(fill=tk.X)
 
         # Logs
         log_frame = ttk.Frame(main_frame)
         log_frame.pack(fill=tk.BOTH, expand=True, pady=5)
         self.log_text = tk.Text(log_frame, height=6, bg='#3d3d3d', fg='white',
-                                insertbackground='white', wrap=tk.WORD, font=('Segoe UI', 9))
+                                insertbackground='white', wrap=tk.WORD, font=('DejaVu Sans', 9))
         vsb = ttk.Scrollbar(log_frame, orient="vertical", command=self.log_text.yview)
         self.log_text.configure(yscrollcommand=vsb.set)
         self.log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -148,7 +148,7 @@ class LineageOSDownloader:
         clear_logs_button = ttk.Button(bottom_frame, text="🧹 Clear Logs", command=self.clear_logs, width=15)
         clear_logs_button.pack(side=tk.LEFT, expand=True, padx=(100, 10))
         self.version_label = ttk.Label(bottom_frame, text=f"Version: {self.app_version}", 
-                                    font=('Segoe UI', 8), foreground='#888888')
+                                    font=('DejaVu Sans', 8), foreground='#888888')
         self.version_label.pack(side=tk.RIGHT, padx=10)
 
     def handle_gui_errors(self, exc_type, exc_value, traceback):
@@ -545,19 +545,24 @@ r2p_action=self
 
 if __name__ == "__main__":
     root = tk.Tk()
-    if getattr(sys, 'frozen', False):
-        script_dir = sys._MEIPASS
-    else:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-    icon_path = os.path.join(script_dir, "icon.ico")
-    try:
-        root.iconbitmap(icon_path)
-    except Exception as e:
-        print(f"Error setting icon: {e}")
-    try:
-        myappid = 'mycompany.lineageos.downloader'
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-    except Exception as e:
-        print(f"Error setting taskbar icon: {e}")
+    
+    # Set icon only on Windows
+    if sys.platform == "win32":
+        import ctypes
+        if getattr(sys, 'frozen', False):
+            script_dir = sys._MEIPASS
+        else:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+        icon_path = os.path.join(script_dir, "icon.ico")
+        try:
+            root.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Error setting icon: {e}")
+        try:
+            myappid = 'mycompany.lineageos.downloader'
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        except Exception as e:
+            print(f"Error setting taskbar icon: {e}")
+    
     app = LineageOSDownloader(root)
     root.mainloop()
