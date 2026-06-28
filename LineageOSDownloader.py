@@ -9,7 +9,6 @@ import logging
 import zipfile
 import sys
 import hashlib
-import platform
 
 class LineageOSDownloader:
     def __init__(self, master):
@@ -545,24 +544,5 @@ r2p_action=self
 
 if __name__ == "__main__":
     root = tk.Tk()
-    
-    # Set icon only on Windows
-    if sys.platform == "win32":
-        import ctypes
-        if getattr(sys, 'frozen', False):
-            script_dir = sys._MEIPASS
-        else:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-        icon_path = os.path.join(script_dir, "icon.ico")
-        try:
-            root.iconbitmap(icon_path)
-        except Exception as e:
-            print(f"Error setting icon: {e}")
-        try:
-            myappid = 'mycompany.lineageos.downloader'
-            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        except Exception as e:
-            print(f"Error setting taskbar icon: {e}")
-    
     app = LineageOSDownloader(root)
     root.mainloop()
